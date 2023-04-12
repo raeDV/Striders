@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+
+{% block title %}{{ super() }} - Register{% endblock %}
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+        {{ message }}<br/>
+    {% endfor %}
+
+    <div class="formcenter">
+        <h1>Registration form</h1>
+        <form action="/register" method="post">
+            {{ form.csrf_token }}
+            <dl>
+                {{ form.username.label }} {{ form.username }}<br/><br/>
+                {{ form.email.label }} {{ form.email }}<br/><br/>
+                {{ form.phone.label }} {{ form.phone }}<br/><br/>
+                {{ form.password.label }} {{ form.password }}<br/><br/>
+                {{ form.confirmPassword.label }} {{ form.confirmPassword }}<br/><br/>
+            </dl>
+            {{ form.submit }}
+        </form>
+    </div>
+{% endblock %}
