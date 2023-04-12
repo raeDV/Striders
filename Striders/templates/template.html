@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Striders</title>
+<style>
+@font-face {
+    font-family: ParaStencil;
+    src: url("static/res/ParalucentStencil-Medium.ttf");
+}
+@font-face {
+    font-family: ParaExtraLight;
+    src: url("static/res/Paralucent-ExtraLight.ttf");
+}
+.formcenter{text-align:center; margin-top: 30px;}
+body {
+    background-color: #CCC;
+    margin: 0;home.html
+    padding: 0;
+    font-family: ParaExtraLight;
+}
+#header {
+    display: block;
+    background-color: #CCC;
+    text-align: center;
+    width: 100%;
+    text-align: center
+}
+#footer {
+    display: block;
+    background-color: #CCC;
+    color: #FFF;
+}
+#main {
+    display: block;
+    overflow-y: scroll;
+    background-color: #FFF;
+    background-attachment: fixed;
+    min-height: 100px;
+    background-image: url("static/img/TileTex.png");
+    color: #650011;
+    text-align: center;
+    width: 100%
+}
+.button {
+    background-color: #FFF;
+    color: #650011;
+    border: 2px solid #00005A;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+    font-family: ParaStencil
+}
+.button a {
+    color: #650011;
+    text-decoration: none
+}
+.button a:hover {
+    color: #00005A
+}
+button {
+    font: inherit
+}
+button:hover {
+    color: #00005A
+}
+.product table {
+    display: inline-table;
+    height: 100%;
+    border-spacing: 0;
+}
+.product {
+    display: inline-block;
+    background-color: rgba(255,255,255,0.5);
+    width: 250px;
+    height: 480px;
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid #00005A;
+    border-radius: 10px;
+}
+.productdetail table {
+    height: 100%;
+    border-spacing: 0px;
+    width: 100%
+}
+.productdetail {
+    display: inline-block;
+    width: max-content;
+    background-color: rgba(255,255,255,0.5);
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #00005A;
+    border-radius: 10px;
+}
+.imageHolder {
+    border-radius: 10px;
+    border: 1px solid;
+    padding: 5px;
+    margin: 0 0 5px 0
+}
+.left {
+    text-align: left;
+    padding: 0px 5px;
+    margin: 0;
+    border-bottom: solid 1px #00005A
+}
+.right {
+    text-align: right;
+    padding: 0px 5px;
+    margin: 0;
+    border-bottom: solid 1px #00005A;
+    border-left: solid 1px #00005A
+}
+#footer a {
+    color: #FFF;
+    text-decoration: none;
+    margin: 10px;
+}
+#footer a:hover {
+    color: #650011
+}
+#header table {
+    margin: 10px;
+    display: inline-table
+}
+select {
+    margin: 5px 0px;
+    width: 25ch;
+}
+input {
+    margin: 5px 0px 5px 0;
+    resize: none;
+    width: 23.45ch
+}
+input, select {
+    padding: 5px;
+    color: #00005A;
+    font: inherit;
+}
+h1 {
+    font-family: ParaStencil;
+    font-weight: normal
+}
+p {
+    color: #00005A;
+    padding: 10px;
+    text-align: justify;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    var $header = $('#header');
+    var $footer = $('#footer');
+    var $main = $('#main');
+    var $window = $(window).on('resize', function(){
+        var height = $(this).height() - ($header.height() + $footer.height() + 3);
+        $main.height(height);
+    }).trigger('resize'); //on page load
+});
+</script>
+</head>
+
+<body>
+<div id="header">
+  <div style="padding: 0; margin: 0"><img src="static/img/striders_logo.png" height="115" alt=""/></div>
+  <table style="width: 100%; margin:0; padding: 0">
+    <tr>
+      <td align="left" style="width: 33%"><table>
+          <tr>
+            <td><span class="button"><a href="/home">SALES and NEW ARRIVAL</a></span></td>
+          </tr>
+        </table></td>
+      <td align="center" style="width: 33%"><table>
+          <tr>
+            <td><span class="button"><a href="/men">Men</a></span></td>
+            <td><span class="button"><a href="/women">Women</a></span></td>
+            <td><span class="button"><a href="/kids">Kids</a></span></td>
+          </tr>
+        </table></td>
+      <td align="right" style="width: 33%"><table>
+          <tr>
+            <td><span class="button"><a href="/register">Register/Account</a></span></td>
+            <td><span class="button"><a href="/login">Login/Logout</a></span></td>
+          </tr>
+        </table></td>
+    </tr>
+  </table>
+</div>
+
+<div id="main"> {% block content %}
+  {% endblock %} </div>
+
+<div id="footer">
+  <table width="100%">
+    <tr>
+      <td style="text-align: left"><a href="/contact">Contact us</a></td>
+      <td style="text-align: right"><a href="/feedback">Feedback</a></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>
