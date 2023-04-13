@@ -8,17 +8,38 @@
     {% endfor %}
 
     <div class="formcenter">
-        <h1>Registration form</h1>
         <form action="/register" method="post">
-            {{ form.csrf_token }}
-            <dl>
-                {{ form.username.label }} {{ form.username }}<br/><br/>
-                {{ form.email.label }} {{ form.email }}<br/><br/>
-                {{ form.phone.label }} {{ form.phone }}<br/><br/>
-                {{ form.password.label }} {{ form.password }}<br/><br/>
-                {{ form.confirmPassword.label }} {{ form.confirmPassword }}<br/><br/>
-            </dl>
-            {{ form.submit }}
+            <table>
+                <th>
+                    <h1>Registration form</h1>
+                </th>
+
+                {{ form.csrf_token }}
+                <tr>
+                    <td>{{ form.username.label }}</td>
+                    <td>{{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.email.label }}</td>
+                    <td>{{ form.email }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.phone.label }}</td>
+                    <td>{{ form.phone }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.password.label }}</td>
+                    <td>{{ form.password }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.confirmPassword.label }}</td>
+                    <td>{{ form.confirmPassword }}</td>
+                </tr>
+                <th>
+                    <td>{{ form.submit }}</td>
+                </th>
+
+            </table>
         </form>
     </div>
 {% endblock %}
