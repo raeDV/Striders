@@ -1,8 +1,9 @@
-import csv
+import sqlite3
 
 import bcrypt
-from flask import Flask, session, redirect, render_template, flash, request
+from flask import Flask, session, redirect, render_template, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask_sqlalchemy import SQLAlchemy
 
 from forms import LoginForm, RegisterForm
 
@@ -14,7 +15,10 @@ login_manager.init_app(app)
 # this way, it will redirect to the login page
 login_manager.login_view = 'login'
 app.config['USE_SESSION_FOR_NEXT'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
+db = SQLAlchemy(app)
 
+from models import DBUser
 
 class User(UserMixin):
     def __init__(self, username, email, phone, password=None):
@@ -36,11 +40,15 @@ def load_user(user_id):
 
 
 def find_user(username):
-    with open('data/users.csv') as f:
-        for user in csv.reader(f):
-            if username == user[0]:
-                return User(*user)
-    return None
+    con = sqlite3.connect("data/users.sqlite")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    cur.execute("SELECT username, email, phone, password FROM users WHERE username = '{}';".format(username))
+    user = cur.fetchone()
+    con.close()
+    if user:
+        user = User(*user)
+    return user
 
     
 @app.route('/')
@@ -61,7 +69,7 @@ def login():
 
             # check if the next page is set in the session by the @login_required decorator
             # if not set, it will default to '/'
-            next_page = session.get('next', '/home')
+            next_page = session.get('next', '/')
             # reset the next page to default '/'
             session['next'] = '/'
             return redirect(next_page)
@@ -87,9 +95,12 @@ def register():
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode(), salt)
-            with open('data/users.csv', 'a') as f:
-                writer = csv.writer(f)
-                writer.writerow([form.username.data, form.email.data, form.phone.data, password.decode()])
+            con = sqlite3.connect("data/users.sqlite")
+            cur = con.cursor()
+            cur.execute("INSERT INTO users(username, email, phone, password) VALUES('{}', '{}', '{}', '{}');".format(
+                form.username.data, form.email.data, form.phone.data, password.decode()))
+            con.commit()
+            con.close()
             flash('Registered successfully.')
             return redirect('/login')
         else:
@@ -99,7 +110,7 @@ def register():
 
 @app.route('/login')
 @login_required
-def protected():
+def signin():
     return render_template('login.html')
 
 
