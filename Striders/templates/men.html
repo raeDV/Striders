@@ -1,6 +1,65 @@
 {% extends "template.html" %}
 {% block content %}
     <h1>Men</h1>
+        <form method="POST">
+            <table class="filter">
+                <tr>
+                    <td>Filters</td>
+                    <td>
+                        <select name="size">
+                            <option value="" selected>Size</option>
+                            <option value="size7">7</option>
+                            <option value="size8">8</option>
+                            <option value="size9">9</option>
+                            <option value="size10">10</option>
+                            <option value="size11">11</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="color">
+                            <option value="" selected>Color</option>
+                            <option value="white">White</option>
+                            <option value="black">Black</option>
+                            <option value="brown">Brown</option>
+                            <option value="grey">Grey</option>
+                            <option value="blue">Blue</option>
+                            <option value="red">Red</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="brand">
+                            <option value="" selected>Brand</option>
+                            <option value="nike">Nike</option>
+                            <option value="adidas">Adidas</option>
+                            <option value="amberjack">Amberjack</option>
+                            <option value="converse">Converse</option>
+                            <option value="reebok">Reebok</option>
+                            <option value="columbia">Columbia</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="category">
+                            <option value="" selected>Category</option>
+                            <option value="casual">Casual</option>
+                            <option value="running">Running</option>
+                            <option value="walking">Walking</option>
+                            <option value="boots">Boots</option>
+                        </select>
+                    </td>
+                    <td>Sort By:
+                        <select name="sort">
+                            <option value="best_sellers" selected>Best Sellers</option>
+                            <option value="newest">Newest</option>
+                            <option value="price_high_to_low">Price High to Low</option>
+                            <option value="price_low_to_high">Price Low to High</option>
+                            <option value="brand_order">Brand A-Z</option>
+                        </select>
+                    </td>
+                    <td><button type="submit">Apply</button></td>
+                </tr>
+            </table>
+        </form>
     {% for i in range(13) %}
       <div class="product">
     <table>

@@ -4,7 +4,7 @@ import bcrypt
 from flask import Flask, session, redirect, render_template, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from models import db, DBUser
+from models import db, DBUser, Filters
 from forms import LoginForm, RegisterForm
 
 app = Flask(__name__)
@@ -17,11 +17,17 @@ login_manager.login_view = 'login'
 app.config['USE_SESSION_FOR_NEXT'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
 db.init_app(app)
-filter_sizes = {5, 6, 7, 8}
-filter_colors = {'black', 'white'}
-filter_brands = {'brand A', 'brand B'}
-filter_categories = {'shoes', 'boots'}
-filters = {filter_sizes, filter_colors, filter_brands, filter_categories}
+
+
+def get_filters(gender):
+    filters = Filters
+    filters.filter_sizes = [5, 6, 7, 8]
+    filters.filter_colors = ['Black', 'White']
+    filters.filter_brands = ['brand A', 'brand B']
+    filters.filter_categories = ['shoes', 'boots']
+    filters.sorters = ['Best Sellers', 'Newest', 'Price High to Low', 'Price Low to High', 'Brand A-Z']
+    return filters
+
 
 class User(UserMixin):
     def __init__(self, username, email, phone, password=None):
@@ -124,17 +130,18 @@ def home():
 
 @app.route('/men')
 def men():
-    return render_template('men.html', filters=filters)
+    return render_template('men.html', filters=get_filters('men'))
 
 
 @app.route('/women')
 def women():
-    return render_template('women.html', filters=filters)
+    return render_template('women.html', filters=get_filters('women'))
 
 
 @app.route('/kids')
 def kids():
-    return render_template('kids.html', filters=filters)
+    print(Filters.filter_sizes)
+    return render_template('kids.html', filters=get_filters('kids'))
 
 
 @app.route('/productdetail')

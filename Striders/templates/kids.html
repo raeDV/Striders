@@ -1,6 +1,54 @@
 {% extends "template.html" %}
 {% block content %}
     <h1>Kids</h1>
+        <form method="POST">
+            <table class="filter">
+                <tr>
+                    <td>Filters</td>
+                    <td>
+                        <select name="size">
+                            <option value="" selected>Size</option>
+                            {% for x in filters.filter_sizes %}
+                            <option value="size{{ x }}">{{ x }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="color">
+                            <option value="" selected>Color</option>
+                            {% for x in filters.filter_colors %}
+                            <option value="{{ x }}">{{ x }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="brand">
+                            <option value="" selected>Brand</option>
+                            {% for x in filters.filter_brands %}
+                            <option value="{{ x }}">{{ x }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td>
+                        <select name="category">
+                            <option value="" selected>Category</option>
+                            {% for x in filters.filter_categories %}
+                            <option value="{{ x }}">{{ x }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>Sort By:
+                        <select name="sort">
+                            {% for x in filters.sorters %}
+                            <option value="{{ x }}">{{ x }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><button type="submit">Apply</button></td>
+                </tr>
+            </table>
+        </form>
     {% for i in range(12) %}
       <div class="product">
     <table>

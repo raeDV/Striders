@@ -9,3 +9,11 @@ class DBUser(db.Model):
     email = db.Column(db.Text(), nullable=False)
     phone = db.Column(db.Text())
     password = db.Column(db.Text(), nullable=False)
+
+
+class Filters:
+    filter_sizes = {}
+    filter_colors = {}
+    filter_brands = {}
+    filter_categories = {}
+    sorters = {}
