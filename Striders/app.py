@@ -17,7 +17,11 @@ login_manager.login_view = 'login'
 app.config['USE_SESSION_FOR_NEXT'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
 db.init_app(app)
-
+filter_sizes = {5, 6, 7, 8}
+filter_colors = {'black', 'white'}
+filter_brands = {'brand A', 'brand B'}
+filter_categories = {'shoes', 'boots'}
+filters = {filter_sizes, filter_colors, filter_brands, filter_categories}
 
 class User(UserMixin):
     def __init__(self, username, email, phone, password=None):
@@ -120,17 +124,17 @@ def home():
 
 @app.route('/men')
 def men():
-    return render_template('men.html')
+    return render_template('men.html', filters=filters)
 
 
 @app.route('/women')
 def women():
-    return render_template('women.html')
+    return render_template('women.html', filters=filters)
 
 
 @app.route('/kids')
 def kids():
-    return render_template('kids.html')
+    return render_template('kids.html', filters=filters)
 
 
 @app.route('/productdetail')
