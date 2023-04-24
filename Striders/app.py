@@ -18,7 +18,6 @@ app.config['USE_SESSION_FOR_NEXT'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
 db = SQLAlchemy(app)
 
-from models import DBUser
 
 class User(UserMixin):
     def __init__(self, username, email, phone, password=None):
@@ -50,7 +49,7 @@ def find_user(username):
         user = User(*user)
     return user
 
-    
+
 @app.route('/')
 def index():
     return render_template('home.html', username=session.get('username'))
