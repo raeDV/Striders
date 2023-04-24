@@ -4,7 +4,7 @@ import bcrypt
 from flask import Flask, session, redirect, render_template, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-
+from models import db, DBUser
 from forms import LoginForm, RegisterForm
 
 app = Flask(__name__)
@@ -16,7 +16,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 app.config['USE_SESSION_FOR_NEXT'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
-db = SQLAlchemy(app)
+db.init_app(app)
 
 
 class User(UserMixin):
