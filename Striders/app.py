@@ -4,15 +4,13 @@ import bcrypt
 from flask import Flask, session, redirect, render_template, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from models import db, DBUser, Filters
-from forms import LoginForm, RegisterForm
+from models import db, DBUser, Filters, Products
+from forms import LoginForm, RegisterForm, AddProductForm
 
 app = Flask(__name__)
 app.secret_key = 'striders'
 login_manager = LoginManager()
 login_manager.init_app(app)
-# without setting the login_view, attempting to access @login_required endpoints will result in an error
-# this way, it will redirect to the login page
 login_manager.login_view = 'login'
 app.config['USE_SESSION_FOR_NEXT'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
@@ -49,7 +47,7 @@ def load_user(user_id):
 
 
 def find_user(username):
-    con = sqlite3.connect("data/users.sqlite")
+    con = sqlite3.connect("instance/users.sqlite")
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     cur.execute("SELECT username, email, phone, password FROM users WHERE username = '{}';".format(username))
@@ -62,7 +60,12 @@ def find_user(username):
 
 @app.route('/')
 def index():
-    return render_template('home.html', username=session.get('username'))
+    con = sqlite3.connect("instance/users.sqlite")
+    c = con.cursor()
+    c.execute("SELECT * FROM products")
+    products = c.fetchall()
+    con.close()
+    return render_template('home.html', products=products, username=session.get('username'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -104,7 +107,7 @@ def register():
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode(), salt)
-            con = sqlite3.connect("data/users.sqlite")
+            con = sqlite3.connect("instance/users.sqlite")
             cur = con.cursor()
             cur.execute("INSERT INTO users(username, email, phone, password) VALUES('{}', '{}', '{}', '{}');".format(
                 form.username.data, form.email.data, form.phone.data, password.decode()))
@@ -121,11 +124,6 @@ def register():
 @login_required
 def signin():
     return render_template('login.html')
-
-
-@app.route('/home')
-def home():
-    return render_template('home.html')
 
 
 @app.route('/men')
@@ -147,6 +145,29 @@ def kids():
 @app.route('/productdetail')
 def product():
     return render_template('product.html')
+
+
+@app.route('/add-product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+    form = AddProductForm()
+    if form.validate_on_submit():
+        # create a new product object and populate it with data from the form
+        product = Products(
+            brand=form.brand.data,
+            model=form.model.data,
+            category=form.category.data,
+            size_range=form.size_range.data,
+            size_type=form.size_type.data,
+            colors=form.colors.data,
+            price=form.price.data
+        )
+        # add the new product to the database
+        db.session.add(product)
+        db.session.commit()
+        flash('Product added successfully.')
+        return redirect('/add-product')
+    return render_template('add_product.html', form=form)
 
 
 if __name__ == '__main__':

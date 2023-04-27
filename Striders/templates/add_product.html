@@ -1,0 +1,30 @@
+{% extends "home.html" %}
+
+{% block content %}
+  <h1>Add Product</h1>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+      {{ form.brand.label }} {{ form.brand }}
+    </div>
+    <div>
+      {{ form.model.label }} {{ form.model }}
+    </div>
+    <div>
+      {{ form.category.label }} {{ form.category }}
+    </div>
+    <div>
+      {{ form.size_range.label }} {{ form.size_range }}
+    </div>
+    <div>
+      {{ form.size_type.label }} {{ form.size_type }}
+    </div>
+    <div>
+      {{ form.colors.label }} {{ form.colors }}
+    </div>
+    <div>
+      {{ form.price.label }} {{ form.price }}
+    </div>
+    <input type="submit" value="Add Product">
+  </form>
+{% endblock %}

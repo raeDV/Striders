@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField
 from wtforms.fields import EmailField
 from wtforms.validators import InputRequired, EqualTo, Length, Regexp
 
@@ -25,3 +25,24 @@ class RegisterForm(FlaskForm):
                                                 EqualTo('password',
                                                         message='Passwords must match.')])
     submit = SubmitField('Register')
+
+
+class AddProductForm(FlaskForm):
+    brand = StringField('Brand', validators=[InputRequired()])
+    model = StringField('Model', validators=[InputRequired()])
+    category = SelectField('Category', choices=[
+        ('Boots', 'Boots'),
+        ('Sandals', 'Sandals')
+    ], validators=[InputRequired()])
+    size_range = StringField('Model', validators=[InputRequired()])
+    size_type = SelectField('Type', choices=[
+        ('US Men', 'US Men'),
+        ('US Women', 'US Women'),
+        ('US Kids', 'US Kids')
+    ], validators=[InputRequired()])
+    colors = SelectField('Color', choices=[
+        ('Blue', 'Blue'),
+        ('Red', 'Red'),
+        ('White', 'White')
+    ], validators=[InputRequired()])
+    price = FloatField('Price', validators=[InputRequired()])
