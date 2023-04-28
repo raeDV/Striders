@@ -49,6 +49,55 @@
                 </tr>
             </table>
         </form>
+
+    {% for product in products %}
+        {% if product.pro_size_type == 'US Kids' %}
+            <div class="product">
+
+                <table>
+                    <tr>
+                        <td colspan="2">
+                            <div class="imageHolder"><img alt="Product" width="100%"
+                                                          src="{{ product.pro_img_url }}"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">Brand</td>
+                        <td class="right">{{ product.pro_brand }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Model</td>
+                        <td class="right">{{ product.pro_model }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Category</td>
+                        <td class="right">{{ product.pro_category }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Size range</td>
+                        <td class="right">{{ product.pro_size_range }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Size type</td>
+                        <td class="right">{{ product.pro_size_type }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Colors</td>
+                        <td class="right">{{ product.pro_colors }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Price</td>
+                        <td class="right">{{ product.pro_price }}$</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px"><span class="button"><a href="/{{ product.pro_id }}">Details</a></span></td>
+                    </tr>
+                </table>
+            </div>
+        {% endif %}
+        <!-- end product detail template -->
+    {% endfor %}
+
     {% for i in range(12) %}
       <div class="product">
     <table>

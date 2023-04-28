@@ -25,8 +25,9 @@ class Product(db.Model):
     pro_price = db.Column(db.Float(), nullable=False)
     pro_desc = db.Column(db.Text(), nullable=False)
     pro_model = db.Column(db.Text(), nullable=False)
+    pro_type = db.Column(db.Text(), nullable=False)
 
-    def __init__(self, pro_img_url, pro_brand, pro_category, pro_model, pro_size_range, pro_size_type, pro_colors,
+    def __init__(self, pro_img_url, pro_brand, pro_category, pro_model, pro_type, pro_size_range, pro_size_type, pro_colors,
                  pro_price,
                  pro_desc):
         self.pro_img_url = pro_img_url
@@ -36,6 +37,7 @@ class Product(db.Model):
         self.pro_size_type = pro_size_type
         self.pro_colors = pro_colors
         self.pro_price = pro_price
+        self.pro_type = pro_type
         self.pro_desc = pro_desc
         self.pro_model = pro_model
 
@@ -57,6 +59,7 @@ class Product(db.Model):
                 "pro_size_type": self.pro_size_type,
                 "pro_colors": self.pro_colors,
                 "pro_price": self.pro_price,
+                "pro_type": self.pro_type,
                 "pro_desc": self.pro_desc}
 
 

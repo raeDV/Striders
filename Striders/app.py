@@ -114,18 +114,21 @@ def register():
 
 @app.route('/men')
 def men():
-    return render_template('men.html', filters=get_filters('men'))
+    products = Product.query.all()
+    return render_template('men.html', products=products, filters=get_filters('men'))
 
 
 @app.route('/women')
 def women():
-    return render_template('women.html', filters=get_filters('women'))
+    products = Product.query.all()
+    return render_template('women.html', products=products, filters=get_filters('women'))
 
 
 @app.route('/kids')
 def kids():
     print(Filters.filter_sizes)
-    return render_template('kids.html', filters=get_filters('kids'))
+    products = Product.query.all()
+    return render_template('kids.html', products=products, filters=get_filters('kids'))
 
 
 @app.route('/<int:pro_id>', methods=["GET"])
@@ -137,14 +140,17 @@ def getproduct(pro_id):
 
 @app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
 def add_to_cart(pro_id):
+    form = AddToCartForm()
     if current_user.is_authenticated:
         user_id = current_user.id
         cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
         if cart_item:
-            cart_item.quantity += 1
+            num = form.quantity.data
+            cart_item.quantity += num
             cart_item.save_to_db()
         else:
-            cart = Cart(pro_id=pro_id, user_id=user_id, quantity=1)
+            num = form.quantity.data
+            cart = Cart(pro_id=pro_id, user_id=user_id, quantity=num)
             cart.save_to_db()
     else:
         flash('You need to log in to add items to your cart', category='danger')
@@ -165,6 +171,34 @@ def cart():
         final_total += product.pro_price * product.quantity
         products.append(product)
     return render_template('cart.html', cart=products, final_total=final_total)
+
+
+@app.route('/cart/<int:pro_id>/remove', methods=["POST", "GET"])
+def remove_from_cart(pro_id):
+    user_id = current_user.id
+    cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
+
+    if not cart_item:
+        return redirect(url_for('cart'))
+
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save_to_db()
+    else:
+        cart_item.delete_from_db()
+
+    return redirect(url_for('cart'))
+
+
+@app.route('/cart/clear', methods=["POST", "GET"])
+def clear_cart():
+    user_id = current_user.id
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+
+    for cart_item in cart_items:
+        cart_item.delete_from_db()
+
+    return redirect(url_for('cart'))
 
 
 @app.route('/account', methods=['GET', 'POST'])
