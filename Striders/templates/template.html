@@ -197,6 +197,9 @@
             }).trigger('resize'); //on page load
         });
     </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -234,12 +237,33 @@
             <td align="right" style="width: 33%">
                 <table>
                     <tr>
-                        <td><span class="button"><a
-                                href="/{% if current_user.is_authenticated %}account{% else %}register{% endif %}">{% if current_user.is_authenticated %}
-                            Account{% else %}Register{% endif %}</a></span></td>
-                        <td><span class="button"><a
-                                href="/{% if current_user.is_authenticated %}logout{% else %}login{% endif %}">{% if current_user.is_authenticated %}
-                            Logout{% else %}Login{% endif %}</a></span></td>
+                        <td>
+                <span class="button">
+
+                        {% if current_user.is_authenticated %}
+                            <a href="/account">Account</a>
+                        {% else %}
+                            <a href="/register">Register</a>
+                        {% endif %}
+
+                </span>
+                        </td>
+                        <td>
+                <span class="button">
+
+                        {% if current_user.is_authenticated %}
+                            <a href="/logout">Logout</a>
+                        {% else %}
+                            <a href="/login">LogIn</a>
+                        {% endif %}
+
+                </span>
+                        </td>
+                        <td>
+                        <span class="button">
+                            <a href="/">Cart</a>
+                        </span>
+                        </td>
                     </tr>
                 </table>
             </td>

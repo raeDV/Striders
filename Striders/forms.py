@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField, IntegerField
 from wtforms.fields import EmailField
-from wtforms.validators import InputRequired, EqualTo, Length, Regexp
+from wtforms.validators import InputRequired, EqualTo, Length, Regexp, DataRequired, NumberRange
 
 
 class LoginForm(FlaskForm):
@@ -29,13 +29,13 @@ class RegisterForm(FlaskForm):
 
 class AddProductForm(FlaskForm):
     brand = StringField('Brand', validators=[InputRequired()])
-    model = StringField('Model', validators=[InputRequired()])
+    img_url = StringField('Image', validators=[InputRequired()])
     category = SelectField('Category', choices=[
         ('Boots', 'Boots'),
         ('Sandals', 'Sandals')
     ], validators=[InputRequired()])
-    size_range = StringField('Model', validators=[InputRequired()])
-    size_type = SelectField('Type', choices=[
+    size_range = StringField('Size Range', validators=[InputRequired()])
+    size_type = SelectField('Size Type', choices=[
         ('US Men', 'US Men'),
         ('US Women', 'US Women'),
         ('US Kids', 'US Kids')
@@ -46,3 +46,12 @@ class AddProductForm(FlaskForm):
         ('White', 'White')
     ], validators=[InputRequired()])
     price = FloatField('Price', validators=[InputRequired()])
+    description = TextAreaField('Description', validators=[InputRequired(), Length(max=10)], )
+
+
+class AddToCartForm(FlaskForm):
+    size = SelectField('Select Size', choices=[('7', '7'), ('8', '8'), ('9', '9'), ('11', '11')],
+                       validators=[DataRequired()])
+    color = SelectField('Select Color', choices=[('white', 'White'), ('black', 'Black')], validators=[DataRequired()])
+    quantity = IntegerField('Enter Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField('Add to Cart')

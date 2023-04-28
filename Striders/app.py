@@ -1,11 +1,10 @@
 import sqlite3
 
 import bcrypt
-from flask import Flask, session, redirect, render_template, flash
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask import Flask, session, redirect, render_template, flash, url_for
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
-from models import db, DBUser, Filters, Products
-from forms import LoginForm, RegisterForm, AddProductForm
+from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm
 
 app = Flask(__name__)
 app.secret_key = 'striders'
@@ -13,8 +12,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 app.config['USE_SESSION_FOR_NEXT'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///users.sqlite'
-db.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///striders.sqlite'
+db = SQLAlchemy(app)
+
+from models import DBUser, Filters, Cart, Product
 
 
 def get_filters(gender):
@@ -47,24 +48,17 @@ def load_user(user_id):
 
 
 def find_user(username):
-    con = sqlite3.connect("instance/users.sqlite")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-    cur.execute("SELECT username, email, phone, password FROM users WHERE username = '{}';".format(username))
-    user = cur.fetchone()
-    con.close()
-    if user:
-        user = User(*user)
+    res = DBUser.query.filter_by(username=username).first()
+    if res:
+        user = User(res.username, res.email, res.phone, res.password)
+    else:
+        user = None
     return user
 
 
 @app.route('/')
 def index():
-    con = sqlite3.connect("instance/users.sqlite")
-    c = con.cursor()
-    c.execute("SELECT * FROM products")
-    products = c.fetchall()
-    con.close()
+    products = Product.query.all()
     return render_template('home.html', products=products, username=session.get('username'))
 
 
@@ -107,23 +101,15 @@ def register():
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode(), salt)
-            con = sqlite3.connect("instance/users.sqlite")
-            cur = con.cursor()
-            cur.execute("INSERT INTO users(username, email, phone, password) VALUES('{}', '{}', '{}', '{}');".format(
-                form.username.data, form.email.data, form.phone.data, password.decode()))
-            con.commit()
-            con.close()
+            user = DBUser(username=form.username.data, email=form.email.data, phone=form.phone.data,
+                          password=password.decode())
+            db.session.add(user)
+            db.session.commit()
             flash('Registered successfully.')
             return redirect('/login')
         else:
             flash('This username already exists, choose another one')
     return render_template('register.html', form=form)
-
-
-@app.route('/login')
-@login_required
-def signin():
-    return render_template('login.html')
 
 
 @app.route('/men')
@@ -142,6 +128,64 @@ def kids():
     return render_template('kids.html', filters=get_filters('kids'))
 
 
+@app.route('/<int:pro_id>', methods=["GET"])
+def getproduct(pro_id):
+    form = AddToCartForm()
+    item = Product.query.get(pro_id)
+    return render_template('product.html', item=item, form=form)
+
+
+@app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
+def add_to_cart(pro_id):
+    if current_user.is_authenticated:
+        user_id = current_user.id
+        cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
+        if cart_item:
+            cart_item.quantity += 1
+            cart_item.save_to_db()
+        else:
+            cart = Cart(pro_id=pro_id, user_id=user_id, quantity=1)
+            cart.save_to_db()
+    else:
+        flash('You need to log in to add items to your cart', category='danger')
+        return redirect('/login')
+    return redirect(url_for('cart'))
+
+
+@app.route("/cart")
+@login_required
+def cart():
+    user_id = current_user.id
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+    products = []
+    final_total = 0
+    for item in cart_items:
+        product = Product.query.get(item.pro_id)
+        product.quantity = item.quantity
+        final_total += product.pro_price * product.quantity
+        products.append(product)
+    return render_template('cart.html', cart=products, final_total=final_total)
+
+
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    form = RegisterForm(obj=current_user)
+    user = find_user(form.username.data)
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.phone = form.phone.data
+        if user and bcrypt.checkpw(form.password.data.encode(), user.password.encode()):
+            if form.password.data:
+                password_hash = bcrypt.hashpw(form.confirmPassword.data.encode(), bcrypt.gensalt())
+                user.password = password_hash.decode()
+        db.session.commit()
+        flash('Your account has been updated!')
+        return redirect(url_for('home.html'))
+    return render_template('account.html', form=form)
+
+
 @app.route('/productdetail')
 def product():
     return render_template('product.html')
@@ -153,17 +197,18 @@ def add_product():
     form = AddProductForm()
     if form.validate_on_submit():
         # create a new product object and populate it with data from the form
-        product = Products(
-            brand=form.brand.data,
-            model=form.model.data,
-            category=form.category.data,
-            size_range=form.size_range.data,
-            size_type=form.size_type.data,
-            colors=form.colors.data,
-            price=form.price.data
+        item = Product(
+            pro_img_url=form.img_url.data,
+            pro_brand=form.brand.data,
+            pro_category=form.category.data,
+            pro_size_range=form.size_range.data,
+            pro_size_type=form.size_type.data,
+            pro_colors=form.colors.data,
+            pro_price=form.price.data,
+            pro_desc=form.description.data
         )
         # add the new product to the database
-        db.session.add(product)
+        db.session.add(item)
         db.session.commit()
         flash('Product added successfully.')
         return redirect('/add-product')
