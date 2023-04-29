@@ -3,80 +3,61 @@
 
 {% block content %}
 
-    <h1 style="text-align:center; margin:4.5rem 0 2rem 0; font-weight:500; font-size: 60px; text-shadow:0 0 0.1em rgb(255, 255, 255)">Cart:</h1>
-<div class="d-flex justify-content-center flex-wrap">
+    <h1>Cart:</h1>
+
     {% for item in cart %}
-    <div class="card" style="width: 14rem; margin:0; border: 1px solid black">
-        <a class="text-dark text-decoration-none" href="{{ url_for('getproduct', pro_id=item.pro_id) }}">
-            <img style="width:80%; margin: 0 auto; padding-left: 3rem" src="{{ item.pro_img_url }}" class="card-img-top"
-                alt="{{ item.pro_model }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ item.pro_brand }}</h5>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">Size: {{ item.pro_size_range }}</li>
-                <li class="list-group-item">Color: {{ item.pro_colors }}</li>
-                <li class="list-group-item">Gender: {{ item.pro_size_type }}</li>
-                <li class="list-group-item">Quantity: {{ item.quantity }}</li>
-                <li class="list-group-item">Price: {{ item.pro_price * item.quantity|round(2)}}</li>
-            </ul>
-        </a>
-        <div class="card-body">
-            <form id="remove_from_cart_form_{{ item.pro_id }}" action="{{ url_for('remove_from_cart', pro_id=item.pro_id) }}" method="post">
-                <button type="submit" class="btn btn-danger" form="remove_from_cart_form_{{ item.pro_id }}">Remove</button>
-            </form>
-        </div>
+    <div class="product"><a href="{{ url_for('getproduct', pro_id=item.pro_id) }}">
+        <table>
+                    <tr>
+                        <td colspan="2">
+                            <div class="imageHolder">
+                                <img alt="{{ item.pro_model }}" width="100%" src="{{ item.pro_img_url }}"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">Brand</td>
+                        <td class="right">{{ item.pro_brand }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Model</td>
+                        <td class="right">{{ item.pro_model }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Size</td>
+                        <td class="right">{{ item.pro_size_range }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Size type</td>
+                        <td class="right">{{ item.pro_size_type }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Color</td>
+                        <td class="right">{{ item.pro_colors }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Quantity</td>
+                        <td class="right">{{ item.quantity }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Sub-Total</td>
+                        <td class="right">{{ item.pro_price * item.quantity|round(2)}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px">            <form id="remove_from_cart_form_{{ item.pro_id }}" action="{{ url_for('remove_from_cart', pro_id=item.pro_id) }}" method="post">
+                <button type="submit" class="button" form="remove_from_cart_form_{{ item.pro_id }}">Remove</button>
+            </form></td>
+                    </tr>
+                </table></a>
     </div>
     {% endfor %}
-</div>
-
-<div class="container card text-center" style="width: 100%; border: 1px solid black">
-    <div class="card-body">
-        <h5 class="card-title">Total:</h5>
-        <p class="card text-center">${{final_total|round(2)}}</p>
+<hr>
+<div class="filter">
+        <h1>Total:</h1>
+        <h2>${{final_total|round(2)}}</h2>
         {% if cart != [] %}
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Clear Cart
-            </button>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+            <button type="button" class="button" data-bs-toggle="modal" data-bs-target="#exampleModal1">
                 Checkout
             </button>
         {% endif %}
-
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">This will clear all items in your cart!</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <a class="btn btn-danger" href="{{ url_for('clear_cart') }}">Clear Cart</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Thank you for shopping at MeanMugs!</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Click 'Submit' to complete your order. Your card will be charged and items will be shipped.
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn btn-primary" href="{{ url_for('clear_cart') }}">Submit</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
 {% endblock %}
