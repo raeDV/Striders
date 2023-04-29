@@ -7,13 +7,16 @@
 <div class="d-flex justify-content-center flex-wrap">
     {% for item in cart %}
     <div class="card" style="width: 14rem; margin:0; border: 1px solid black">
-        <a class="text-dark text-decoration-none" href="{{ '/<int:pro_id>' }}">
+        <a class="text-dark text-decoration-none" href="{{ url_for('getproduct', pro_id=item.pro_id) }}">
             <img style="width:80%; margin: 0 auto; padding-left: 3rem" src="{{ item.pro_img_url }}" class="card-img-top"
                 alt="{{ item.pro_model }}">
             <div class="card-body">
                 <h5 class="card-title">{{ item.pro_brand }}</h5>
             </div>
             <ul class="list-group list-group-flush">
+                <li class="list-group-item">Size: {{ item.pro_size_range }}</li>
+                <li class="list-group-item">Color: {{ item.pro_colors }}</li>
+                <li class="list-group-item">Gender: {{ item.pro_size_type }}</li>
                 <li class="list-group-item">Quantity: {{ item.quantity }}</li>
                 <li class="list-group-item">Price: {{ item.pro_price * item.quantity|round(2)}}</li>
             </ul>
