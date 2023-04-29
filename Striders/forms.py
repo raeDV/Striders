@@ -51,7 +51,7 @@ class AddProductForm(FlaskForm):
 
 class AddToCartForm(FlaskForm):
     size = SelectField('Select Size', choices=[('7', '7'), ('8', '8'), ('9', '9'), ('11', '11')],
-                       validators=[DataRequired()])
-    color = SelectField('Select Color', choices=[('white', 'White'), ('black', 'Black')], validators=[DataRequired()])
+                       validators=[DataRequired()], default=0)
+    color = SelectField('Select Color', choices=[('white', 'White'), ('black', 'Black')], validators=[DataRequired()], default=0)
     quantity = IntegerField('Enter Quantity', validators=[DataRequired(), NumberRange(min=1)], default=1)
     submit = SubmitField('Add to Cart')

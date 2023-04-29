@@ -71,7 +71,7 @@ def login():
         # passwords are kept in hashed form, using the bcrypt algorithm
         if user and bcrypt.checkpw(form.password.data.encode(), user.password.encode()):
             login_user(user)
-            flash('Logged in successfully.')
+            # flash('Logged in successfully.')
 
             # check if the next page is set in the session by the @login_required decorator
             # if not set, it will default to '/'
@@ -138,6 +138,42 @@ def getproduct(pro_id):
     return render_template('product.html', item=item, form=form)
 
 
+# @app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
+# def add_to_cart(pro_id):
+#     form = AddToCartForm()
+#     if current_user.is_authenticated:
+#         user_id = current_user.id
+#         cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
+#         if cart_item:
+#             num = form.quantity.data
+#             cart_item.quantity += num
+#             cart_item.save_to_db()
+#         else:
+#             num = form.quantity.data
+#             cart = Cart(pro_id=pro_id, user_id=user_id, quantity=num)
+#             cart.save_to_db()
+#     else:
+#         flash('You need to log in to add items to your cart', category='danger')
+#         return redirect('/login')
+#     return redirect(url_for('cart'))
+#
+#
+# @app.route("/cart")
+# @login_required
+# def cart():
+#     user_id = current_user.id
+#     cart_items = Cart.query.filter_by(user_id=user_id).all()
+#     products = []
+#     final_total = 0
+#     for item in cart_items:
+#         product = Product.query.get(item.pro_id)
+#         product.quantity = item.quantity
+#         final_total += product.pro_price * product.quantity
+#         products.append(product)
+#     return render_template('cart.html', cart=products, final_total=final_total)
+
+# from flask import session
+
 @app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
 def add_to_cart(pro_id):
     form = AddToCartForm()
@@ -155,22 +191,34 @@ def add_to_cart(pro_id):
     else:
         flash('You need to log in to add items to your cart', category='danger')
         return redirect('/login')
+
+    # Store the form data in Flask's session
+    session['form'] = form.data
+
     return redirect(url_for('cart'))
 
 
 @app.route("/cart")
 @login_required
 def cart():
+    # Retrieve the form data from Flask's session
+    form_data = session.pop('form', None)
+    form = AddToCartForm(data=form_data)
     user_id = current_user.id
     cart_items = Cart.query.filter_by(user_id=user_id).all()
     products = []
     final_total = 0
     for item in cart_items:
         product = Product.query.get(item.pro_id)
+        product.pro_size_range = form.size.data
+        product.pro_colors = form.color.data
         product.quantity = item.quantity
         final_total += product.pro_price * product.quantity
         products.append(product)
-    return render_template('cart.html', cart=products, final_total=final_total)
+
+        session['form'] = form.data
+
+    return render_template('cart.html', cart=products, final_total=final_total, form=form)
 
 
 @app.route('/cart/<int:pro_id>/remove', methods=["POST", "GET"])
