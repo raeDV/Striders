@@ -300,6 +300,8 @@ def add_product():
 
         flash('Product added successfully.')
         return redirect('/add-product')
+    else:
+        flash('Failed to Add Product.')
 
     return render_template('add_product.html', form=form)
 

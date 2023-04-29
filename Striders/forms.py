@@ -55,6 +55,7 @@ class AddProductForm(FlaskForm):
         ('General', 'General'),
         ('Sale', 'Sale')
     ], validators=[InputRequired()])
+    submit = SubmitField('Add Product')
 
 
 class AddToCartForm(FlaskForm):
