@@ -1,5 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField, IntegerField
+from flask_wtf.file import FileRequired
+from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField, IntegerField, \
+    FileField
 from wtforms.fields import EmailField
 from wtforms.validators import InputRequired, EqualTo, Length, Regexp, DataRequired, NumberRange
 
@@ -28,8 +30,8 @@ class RegisterForm(FlaskForm):
 
 
 class AddProductForm(FlaskForm):
+    img_url = StringField('Image')
     brand = StringField('Brand', validators=[InputRequired()])
-    img_url = StringField('Image', validators=[InputRequired()])
     category = SelectField('Category', choices=[
         ('Boots', 'Boots'),
         ('Sandals', 'Sandals')
@@ -46,7 +48,13 @@ class AddProductForm(FlaskForm):
         ('White', 'White')
     ], validators=[InputRequired()])
     price = FloatField('Price', validators=[InputRequired()])
-    description = TextAreaField('Description', validators=[InputRequired(), Length(max=10)], )
+    description = TextAreaField('Description', validators=[InputRequired(), Length(max=10000)])
+    model = StringField('Model', validators=[InputRequired()])
+    type = SelectField('Type', choices=[
+        ('New', 'New'),
+        ('General', 'General'),
+        ('Sale', 'Sale')
+    ], validators=[InputRequired()])
 
 
 class AddToCartForm(FlaskForm):

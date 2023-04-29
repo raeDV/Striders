@@ -1,9 +1,12 @@
+import os
 import sqlite3
 
 import bcrypt
 from flask import Flask, session, redirect, render_template, flash, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+
 from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm
 
 app = Flask(__name__)
@@ -230,7 +233,6 @@ def product():
 def add_product():
     form = AddProductForm()
     if form.validate_on_submit():
-        # create a new product object and populate it with data from the form
         item = Product(
             pro_img_url=form.img_url.data,
             pro_brand=form.brand.data,
@@ -239,13 +241,18 @@ def add_product():
             pro_size_type=form.size_type.data,
             pro_colors=form.colors.data,
             pro_price=form.price.data,
-            pro_desc=form.description.data
+            pro_desc=form.description.data,
+            pro_model=form.model.data,
+            pro_type=form.type.data
         )
+
         # add the new product to the database
         db.session.add(item)
         db.session.commit()
+
         flash('Product added successfully.')
         return redirect('/add-product')
+
     return render_template('add_product.html', form=form)
 
 

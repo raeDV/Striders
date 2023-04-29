@@ -16,7 +16,7 @@ class DBUser(db.Model):
 class Product(db.Model):
     __tablename__ = 'products'
     pro_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    pro_img_url = db.Column(db.Text(), nullable=False)
+    pro_img_url = db.Column(db.Text())
     pro_brand = db.Column(db.Text(), nullable=False)
     pro_category = db.Column(db.Text(), nullable=False)
     pro_size_range = db.Column(db.Text(), nullable=False)
@@ -27,9 +27,8 @@ class Product(db.Model):
     pro_model = db.Column(db.Text(), nullable=False)
     pro_type = db.Column(db.Text(), nullable=False)
 
-    def __init__(self, pro_img_url, pro_brand, pro_category, pro_model, pro_type, pro_size_range, pro_size_type, pro_colors,
-                 pro_price,
-                 pro_desc):
+    def __init__(self, pro_img_url, pro_brand, pro_category, pro_size_range, pro_size_type, pro_colors,
+                 pro_price, pro_desc, pro_model, pro_type):
         self.pro_img_url = pro_img_url
         self.pro_brand = pro_brand
         self.pro_category = pro_category
@@ -37,9 +36,9 @@ class Product(db.Model):
         self.pro_size_type = pro_size_type
         self.pro_colors = pro_colors
         self.pro_price = pro_price
-        self.pro_type = pro_type
         self.pro_desc = pro_desc
         self.pro_model = pro_model
+        self.pro_type = pro_type
 
     def save_to_db(self):
         db.session.add(self)
