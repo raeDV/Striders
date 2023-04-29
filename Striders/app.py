@@ -19,8 +19,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///striders.sqlite'
 db.init_app(app)
 
 
-
-
 def get_filters(gender):
     filters = Filters
     filters.filter_sizes = [5, 6, 7, 8]
