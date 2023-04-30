@@ -65,12 +65,17 @@ class Product(db.Model):
 
 
 class Cart(db.Model):
+    __tablename__ = 'cart'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     pro_id = db.Column(db.Integer, db.ForeignKey('products.pro_id'), nullable=False)
     quantity = db.Column(db.Integer, default=1)
+    color = db.Column(db.Text(), nullable=False, default='White')
+    size = db.Column(db.Text(), nullable=False, default='7')
 
-    def __init__(self, user_id, pro_id, quantity=1):
+    def __init__(self, user_id, pro_id, color, size, quantity=1):
+        self.size = size
+        self.color = color
         self.user_id = user_id
         self.pro_id = pro_id
         self.quantity = quantity
