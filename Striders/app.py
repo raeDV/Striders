@@ -5,6 +5,7 @@ import bcrypt
 from flask import Flask, session, redirect, render_template, flash, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
+from unicodedata import numeric
 from werkzeug.utils import secure_filename
 from models import DBUser, Filters, Cart, Product, db
 from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm
@@ -21,10 +22,49 @@ db.init_app(app)
 
 def get_filters(gender):
     filters = Filters
-    filters.filter_sizes = [5, 6, 7, 8]
-    filters.filter_colors = ['Black', 'White']
-    filters.filter_brands = ['brand A', 'brand B']
-    filters.filter_categories = ['shoes', 'boots']
+    size_grp = Product.query.group_by(Product.pro_size_range).all()
+    filters.filter_sizes = []
+    for size_entry in size_grp:
+        size_entry = size_entry.pro_size_range.split(' - ')
+        for size in size_entry:
+            size.strip()
+            size = float(size)
+            if size not in filters.filter_sizes:
+                filters.filter_sizes.append(size)
+    size_list_builder = []
+    for s in range(int(min(filters.filter_sizes)*2), int(max(filters.filter_sizes)*2)+1):
+        size_list_builder.append(s/2)
+    filters.filter_sizes = sorted(size_list_builder)
+    filters.filter_colors = []
+    color_grp = Product.query.group_by(Product.pro_colors).all()
+    for color_entry in color_grp:
+        color_entry = color_entry.pro_colors.split(',')
+        for color in color_entry:
+            color = color.rstrip()
+            color = color.lstrip()
+            if color not in filters.filter_colors:
+                filters.filter_colors.append(color)
+    filters.filter_colors = sorted(filters.filter_colors)
+    filters.filter_brands = []
+    brand_grp = Product.query.group_by(Product.pro_brand).all()
+    for brand in brand_grp:
+        brand = brand.pro_brand
+        brand = brand.rstrip()
+        brand = brand.lstrip()
+        brand = brand.lower()
+        brand = brand.title()
+        if brand not in filters.filter_brands:
+            filters.filter_brands.append(brand)
+    filters.filter_categories = []
+    cat_grp = Product.query.group_by(Product.pro_category).all()
+    for cat in cat_grp:
+        cat = cat.pro_category
+        cat = cat.rstrip()
+        cat = cat.lstrip()
+        cat = cat.lower()
+        cat = cat.title()
+        if cat not in filters.filter_categories:
+            filters.filter_categories.append(cat)
     filters.sorters = ['Best Sellers', 'Newest', 'Price High to Low', 'Price Low to High', 'Brand A-Z']
     return filters
 
