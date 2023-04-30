@@ -9,12 +9,18 @@
                 <table>
                     <tr>
                         <td colspan="2">
-                            {% for image_url in product.pro_img_url.split(', ') %}
-                                <div class="imageHolder">
-                                    <img alt="Product" width="100%" src="static/img/{{ image_url }}"
-                                         alt="Product Image">
+                            <div class="imageHolder">
+                                <div class="slideshow-container">
+                                    {% for image_url in product.pro_img_url.split(', ') %}
+                                        <div class="mySlides fade">
+                                            <img alt="Product" width="100%" src="static/img/{{ image_url }}"
+                                                 alt="Product Image">
+                                        </div>
+                                    {% endfor %}
+                                    <a class="prev" onclick="plusSlides(-1, this.parentNode)">&#10094;</a>
+                                    <a class="next" onclick="plusSlides(1, this.parentNode)">&#10095;</a>
                                 </div>
-                            {% endfor %}
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -63,12 +69,18 @@
                 <table>
                     <tr>
                         <td colspan="2">
-                            {% for image_url in product.pro_img_url.split(', ') %}
-                                <div class="imageHolder">
-                                    <img alt="Product" width="100%" src="static/img/{{ image_url }}"
-                                         alt="Product Image">
+                            <div class="imageHolder">
+                                <div class="slideshow-container">
+                                    {% for image_url in product.pro_img_url.split(', ') %}
+                                        <div class="mySlides fade">
+                                            <img alt="Product" width="100%" src="static/img/{{ image_url }}"
+                                                 alt="Product Image">
+                                        </div>
+                                    {% endfor %}
+                                    <a class="prev" onclick="plusSlides(-1, this.parentNode)">&#10094;</a>
+                                    <a class="next" onclick="plusSlides(1, this.parentNode)">&#10095;</a>
                                 </div>
-                            {% endfor %}
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -109,4 +121,33 @@
         {% endif %}
         <!-- end product detail template -->
     {% endfor %}
+
+    <script>
+        var slideIndex = 1;
+
+        function plusSlides(n, container) {
+            showSlides(slideIndex += n, container);
+        }
+
+        function showSlides(n, container) {
+            var i;
+            var slides = container.getElementsByClassName("mySlides");
+            if (n > slides.length) {
+                slideIndex = 1
+            }
+            if (n < 1) {
+                slideIndex = slides.length
+            }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex - 1].style.display = "block";
+        }
+
+        // show the first slide when the page loads
+        var slideshowContainers = document.getElementsByClassName("slideshow-container");
+        for (var i = 0; i < slideshowContainers.length; i++) {
+            showSlides(1, slideshowContainers[i]);
+        }
+    </script>
 {% endblock %}
