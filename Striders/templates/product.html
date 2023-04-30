@@ -65,7 +65,13 @@
                             <table style="margin: 0; padding: 10px; width: 100%">
                                 <tr>
                                     <td class="left">{{ form.size.label }}</td>
-                                    <td class="right">{{ form.size }}</td>
+                                                                        <td class="right">
+                                        <select class="size-select" name="{{ form.size.name }}">
+                                                {% for size in sizes %}
+                                                <option value="{{ size }}">{{ size }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="left">{{ form.color.label }}</td>

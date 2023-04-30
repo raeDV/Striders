@@ -1,6 +1,10 @@
+import os
+
 import bcrypt
 from flask import Flask, session, redirect, render_template, flash, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+
 from models import DBUser, Filters, Cart, Product, db
 from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm
 
@@ -174,7 +178,13 @@ def kids():
 def getproduct(pro_id):
     form = AddToCartForm()
     item = Product.query.get(pro_id)
-    return render_template('product.html', item=item, form=form)
+    sizes_range = item.pro_size_range.split(' - ')
+    sizes = []
+    sizes_range[0] = float(sizes_range[0])
+    sizes_range[1] = float(sizes_range[1])
+    for s in range(int(sizes_range[0]*2), int(sizes_range[1]*2)+1):
+        sizes.append(s/2)
+    return render_template('product.html', item=item, form=form, sizes=sizes)
 
 
 @app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
