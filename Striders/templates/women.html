@@ -7,14 +7,6 @@
                 <tr>
                     <td>Filters</td>
                     <td>
-                        <select name="size">
-                            <option value="" selected>Size</option>
-                            {% for x in filters.filter_sizes %}
-                            <option value="size{{ x }}">{{ x }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
                         <select name="color">
                             <option value="" selected>Color</option>
                             {% for x in filters.filter_colors %}

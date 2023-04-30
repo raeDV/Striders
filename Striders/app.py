@@ -20,20 +20,6 @@ db.init_app(app)
 
 def get_filters(gender):
     filters = Filters
-    # size
-    size_grp = Product.query.group_by(Product.pro_size_range).filter(Product.pro_size_type == gender)
-    filters.filter_sizes = []
-    for size_entry in size_grp:
-        size_entry = size_entry.pro_size_range.split(' - ')
-        for size in size_entry:
-            size.strip()
-            size = float(size)
-            if size not in filters.filter_sizes:
-                filters.filter_sizes.append(size)
-    size_list_builder = []
-    for s in range(int(min(filters.filter_sizes)*2), int(max(filters.filter_sizes)*2)+1):
-        size_list_builder.append(s/2)
-    filters.filter_sizes = sorted(size_list_builder)
     # color
     filters.filter_colors = []
     color_grp = Product.query.group_by(Product.pro_colors).filter(Product.pro_size_type == gender)
