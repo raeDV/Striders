@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileRequired
+from flask_wtf.file import FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField, IntegerField, \
     FileField
 from wtforms.fields import EmailField
@@ -55,8 +55,7 @@ class AddProductForm(FlaskForm):
 
 
 class AddToCartForm(FlaskForm):
-    size = SelectField('Select Size', choices=[('7', '7'), ('8', '8'), ('9', '9'), ('11', '11')],
-                       validators=[DataRequired()], default=0)
+    size = SelectField('Select Size', validators=[DataRequired()], default=0)
     color = SelectField('Select Color', validators=[DataRequired()], default=0)
     quantity = IntegerField('Enter Quantity', validators=[DataRequired(), NumberRange(min=1)], default=1)
     submit = SubmitField('Add to Cart')
