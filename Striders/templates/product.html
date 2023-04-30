@@ -65,7 +65,7 @@
                             <table style="margin: 0; padding: 10px; width: 100%">
                                 <tr>
                                     <td class="left">{{ form.size.label }}</td>
-                                                                        <td class="right">
+                                    <td class="right">
                                         <select class="size-select" name="{{ form.size.name }}">
                                                 {% for size in sizes %}
                                                 <option value="{{ size }}">{{ size }}</option>
@@ -90,9 +90,8 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        <a href="/add_to_cart/{{ item.id }}" class="card-link"
-                                           style="color:white; text-decoration:none">
-                                            {{ form.submit }}
+                                        <a href="/add_to_cart/{{ item.id }}">
+                                            <input class="button" id="submit" name="submit" type="submit" value="Add to Cart">
                                         </a>
                                     </td>
                                 </tr>
