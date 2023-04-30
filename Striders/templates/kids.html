@@ -57,8 +57,12 @@
                 <table>
                     <tr>
                         <td colspan="2">
-                            <div class="imageHolder"><img alt="Product" width="100%"
-                                                          src="{{ product.pro_img_url }}"></div>
+                            {% for image_url in product.pro_img_url.split(', ') %}
+                                <div class="imageHolder">
+                                    <img alt="Product" width="100%" src="static/img/{{ image_url }}"
+                                         alt="Product Image">
+                                </div>
+                            {% endfor %}
                         </td>
                     </tr>
                     <tr>
@@ -96,46 +100,5 @@
             </div>
         {% endif %}
         <!-- end product detail template -->
-    {% endfor %}
-
-    {% for i in range(12) %}
-      <div class="product">
-    <table>
-      <tr>
-        <td colspan="2"><div class="imageHolder"><img alt="Product" width="100%" src="static/img/61nqdAJLzAL._AC_UL640_FMwebp_QL65_.webp"></div></td>
-      </tr>
-      <tr>
-        <td class="left">Brand</td>
-        <td class="right">Columbia</td>
-      </tr>
-      <tr>
-        <td class="left">Model</td>
-        <td class="right">Newton Ridge Plus II</td>
-      </tr>
-      <tr>
-        <td class="left">Category</td>
-        <td class="right">boots</td>
-      </tr>
-      <tr>
-        <td class="left">Size range</td>
-        <td class="right">7 - 11</td>
-      </tr>
-      <tr>
-        <td class="left">Size type</td>
-        <td class="right">US Men</td>
-      </tr>
-      <tr>
-        <td class="left">Colors</td>
-        <td class="right">white, black</td>
-      </tr>
-      <tr>
-        <td class="left">Price</td>
-        <td class="right">159.99$</td>
-      </tr>
-      <tr>
-        <td colspan="2" style="padding: 10px"><span class="button"><a href="/productdetail">Details</a></span></td>
-      </tr>
-    </table>
-  </div>
     {% endfor %}
 {% endblock %}
