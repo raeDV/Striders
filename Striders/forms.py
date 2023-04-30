@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileRequired
+from flask_wtf.file import FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, FloatField, TextAreaField, SelectField, IntegerField, \
     FileField
 from wtforms.fields import EmailField
@@ -30,31 +30,27 @@ class RegisterForm(FlaskForm):
 
 
 class AddProductForm(FlaskForm):
-    img_url = StringField('Image')
-    brand = StringField('Brand', validators=[InputRequired()])
-    category = SelectField('Category', choices=[
-        ('Boots', 'Boots'),
-        ('Sandals', 'Sandals')
-    ], validators=[InputRequired()])
-    size_range = StringField('Size Range', validators=[InputRequired()])
-    size_type = SelectField('Size Type', choices=[
+    pro_img_url = FileField('Image', validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'jpeg', 'png'], 'Only JPEG, JPG, and PNG images are allowed!')
+    ])
+    pro_brand = StringField('Brand', validators=[InputRequired()])
+    pro_category = StringField('Category', validators=[InputRequired()])
+    pro_size_range = StringField('Size Range', validators=[InputRequired()])
+    pro_size_type = SelectField('Size Type', choices=[
         ('US Men', 'US Men'),
         ('US Women', 'US Women'),
         ('US Kids', 'US Kids')
-    ], validators=[InputRequired()])
-    colors = SelectField('Color', choices=[
-        ('Blue', 'Blue'),
-        ('Red', 'Red'),
-        ('White', 'White')
-    ], validators=[InputRequired()])
-    price = FloatField('Price', validators=[InputRequired()])
-    description = TextAreaField('Description', validators=[InputRequired(), Length(max=10000)])
-    model = StringField('Model', validators=[InputRequired()])
-    type = SelectField('Type', choices=[
+    ], validators=[DataRequired()])
+    pro_colors = StringField('Color', validators=[InputRequired()])
+    pro_price = FloatField('Price', validators=[InputRequired()])
+    pro_desc = TextAreaField('Description', validators=[InputRequired(), Length(max=10000)])
+    pro_model = StringField('Model', validators=[InputRequired()])
+    pro_type = SelectField('Type', choices=[
         ('New', 'New'),
         ('General', 'General'),
         ('Sale', 'Sale')
-    ], validators=[InputRequired()])
+    ], validators=[DataRequired()])
     submit = SubmitField('Add Product')
 
 

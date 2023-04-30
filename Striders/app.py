@@ -279,27 +279,31 @@ def product():
 def add_product():
     form = AddProductForm()
     if form.validate_on_submit():
-        item = Product(
-            pro_img_url=form.img_url.data,
-            pro_brand=form.brand.data,
-            pro_category=form.category.data,
-            pro_size_range=form.size_range.data,
-            pro_size_type=form.size_type.data,
-            pro_colors=form.colors.data,
-            pro_price=form.price.data,
-            pro_desc=form.description.data,
-            pro_model=form.model.data,
-            pro_type=form.type.data
+        if form.pro_img_url.data:
+            filename = secure_filename(form.pro_img_url.data.filename)
+            form.pro_img_url.data.save(os.path.join(app.root_path, 'static/img', filename))
+            img_url = filename
+        else:
+            img_url = None
+        new_product = Product(
+            pro_img_url=img_url,
+            pro_brand=form.pro_brand.data,
+            pro_category=form.pro_category.data,
+            pro_size_range=form.pro_size_range.data,
+            pro_size_type=form.pro_size_type.data,
+            pro_colors=form.pro_colors.data,
+            pro_price=form.pro_price.data,
+            pro_desc=form.pro_desc.data,
+            pro_model=form.pro_model.data,
+            pro_type=form.pro_type.data
         )
 
         # add the new product to the database
-        db.session.add(item)
+        db.session.add(new_product)
         db.session.commit()
 
         flash('Product added successfully.')
         return redirect('/add-product')
-    else:
-        flash('Failed to Add Product.')
 
     return render_template('add_product.html', form=form)
 

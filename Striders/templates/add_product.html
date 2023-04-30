@@ -3,37 +3,39 @@
 {% block content %}
     <h1>Add Product</h1>
     <form method="POST" enctype="multipart/form-data">
-
+            {{ form.csrf_token }}
         <div>
-            {{ form.img_url.label }} {{ form.img_url }}
+            {{ form.pro_img_url.label }} {{ form.pro_img_url }}
         </div>
         <div>
-            {{ form.brand.label }} {{ form.brand }}
+            {{ form.pro_brand.label }} {{ form.pro_brand }}
         </div>
         <div>
-            {{ form.category.label }} {{ form.category }}
+            {{ form.pro_category.label }} {{ form.pro_category }}
         </div>
         <div>
-            {{ form.size_range.label }} {{ form.size_range }}
+            {{ form.pro_size_range.label }} {{ form.pro_size_range }}
         </div>
         <div>
-            {{ form.size_type.label }} {{ form.size_type }}
+            {{ form.pro_size_type.label }} {{ form.pro_size_type }}
         </div>
         <div>
-            {{ form.colors.label }} {{ form.colors }}
+            {{ form.pro_colors.label }} {{ form.pro_colors }}
         </div>
         <div>
-            {{ form.price.label }} {{ form.price }}
+            {{ form.pro_price.label }} {{ form.pro_price }}
         </div>
         <div>
-            {{ form.description.label }} {{ form.description }}
+            {{ form.pro_desc.label }} {{ form.pro_desc }}
         </div>
         <div>
-            {{ form.model.label }} {{ form.model }}
+            {{ form.pro_model.label }} {{ form.pro_model }}
         </div>
         <div>
-            {{ form.type.label }} {{ form.type }}
+            {{ form.pro_type.label }} {{ form.pro_type }}
         </div>
-        <input type="submit" value="Add Product">
+        <div>
+            {{ form.submit }}
+        </div>
     </form>
 {% endblock %}
