@@ -10,8 +10,12 @@
         <table>
                     <tr>
                         <td colspan="2">
-                            <div class="imageHolder">
-                                <img alt="{{ item.pro_model }}" width="100%" src="{{ item.pro_img_url }}"></div>
+                            {% for image_url in item.pro_img_url.split(', ') %}
+                                <div class="imageHolder">
+                                    <img alt="Product" width="100%" src="static/img/{{ image_url }}"
+                                         alt="Product Image">
+                                </div>
+                            {% endfor %}
                         </td>
                     </tr>
                     <tr>
