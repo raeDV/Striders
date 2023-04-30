@@ -1,0 +1,67 @@
+{% extends "template.html" %}
+{% block title %}{{ super() }} - Cart{% endblock %}
+
+{% block content %}
+
+    <h1>Cart:</h1>
+
+    {% for item in cart %}
+    <div class="product"><a href="{{ url_for('getproduct', pro_id=item.pro_id) }}">
+        <table>
+                    <tr>
+                        <td colspan="2">
+                            {% for image_url in item.pro_img_url.split(', ') %}
+                                <div class="imageHolder">
+                                    <img alt="Product" width="100%" src="static/img/{{ image_url }}"
+                                         alt="Product Image">
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left">Brand</td>
+                        <td class="right">{{ item.pro_brand }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Model</td>
+                        <td class="right">{{ item.pro_model }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Size</td>
+                        <td class="right">{{ item.pro_size_range }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Size type</td>
+                        <td class="right">{{ item.pro_size_type }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Color</td>
+                        <td class="right">{{ item.pro_colors }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Quantity</td>
+                        <td class="right">{{ item.quantity }}</td>
+                    </tr>
+                    <tr>
+                        <td class="left">Sub-Total</td>
+                        <td class="right">{{ item.pro_price * item.quantity|round(2)}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px">            <form id="remove_from_cart_form_{{ item.pro_id }}" action="{{ url_for('remove_from_cart', pro_id=item.pro_id) }}" method="post">
+                <button type="submit" class="button" form="remove_from_cart_form_{{ item.pro_id }}">Remove</button>
+            </form></td>
+                    </tr>
+                </table></a>
+    </div>
+    {% endfor %}
+<hr>
+<div class="filter">
+        <h1>Total:</h1>
+        <h2>${{final_total|round(2)}}</h2>
+        {% if cart != [] %}
+            <button type="button" class="button" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+                Checkout
+            </button>
+        {% endif %}
+</div>
+{% endblock %}
