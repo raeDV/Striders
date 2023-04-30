@@ -30,7 +30,10 @@ class RegisterForm(FlaskForm):
 
 
 class AddProductForm(FlaskForm):
-    img_url = StringField('Image')
+    pro_img_url = FileField('Image', validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'jpeg', 'png'], 'Only JPEG, JPG, and PNG images are allowed!')
+    ])
     brand = StringField('Brand', validators=[InputRequired()])
     category = SelectField('Category', choices=[
         ('Boots', 'Boots'),
