@@ -328,9 +328,12 @@ def add_product():
     form = AddProductForm()
     if form.validate_on_submit():
         if form.pro_img_url.data:
-            filename = secure_filename(form.pro_img_url.data.filename)
-            form.pro_img_url.data.save(os.path.join(app.root_path, 'static/img', filename))
-            img_url = filename
+            filenames = []
+            for file in form.pro_img_url.data:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.root_path, 'static/img', filename))
+                filenames.append(filename)
+            img_url = ', '.join(filenames)
         else:
             img_url = None
         new_product = Product(
