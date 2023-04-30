@@ -22,7 +22,8 @@ db.init_app(app)
 
 def get_filters(gender):
     filters = Filters
-    size_grp = Product.query.group_by(Product.pro_size_range).all()
+    # size
+    size_grp = Product.query.group_by(Product.pro_size_range).filter(Product.pro_size_type == gender)
     filters.filter_sizes = []
     for size_entry in size_grp:
         size_entry = size_entry.pro_size_range.split(' - ')
@@ -35,8 +36,9 @@ def get_filters(gender):
     for s in range(int(min(filters.filter_sizes)*2), int(max(filters.filter_sizes)*2)+1):
         size_list_builder.append(s/2)
     filters.filter_sizes = sorted(size_list_builder)
+    # color
     filters.filter_colors = []
-    color_grp = Product.query.group_by(Product.pro_colors).all()
+    color_grp = Product.query.group_by(Product.pro_colors).filter(Product.pro_size_type == gender)
     for color_entry in color_grp:
         color_entry = color_entry.pro_colors.split(',')
         for color in color_entry:
@@ -45,8 +47,9 @@ def get_filters(gender):
             if color not in filters.filter_colors:
                 filters.filter_colors.append(color)
     filters.filter_colors = sorted(filters.filter_colors)
+    # brand
     filters.filter_brands = []
-    brand_grp = Product.query.group_by(Product.pro_brand).all()
+    brand_grp = Product.query.group_by(Product.pro_brand).filter(Product.pro_size_type == gender)
     for brand in brand_grp:
         brand = brand.pro_brand
         brand = brand.rstrip()
@@ -55,8 +58,9 @@ def get_filters(gender):
         brand = brand.title()
         if brand not in filters.filter_brands:
             filters.filter_brands.append(brand)
+    # category
     filters.filter_categories = []
-    cat_grp = Product.query.group_by(Product.pro_category).all()
+    cat_grp = Product.query.group_by(Product.pro_category).filter(Product.pro_size_type == gender)
     for cat in cat_grp:
         cat = cat.pro_category
         cat = cat.rstrip()
@@ -156,20 +160,20 @@ def register():
 @app.route('/men')
 def men():
     products = Product.query.all()
-    return render_template('men.html', products=products, filters=get_filters('men'))
+    return render_template('men.html', products=products, filters=get_filters('US Men'))
 
 
 @app.route('/women')
 def women():
     products = Product.query.all()
-    return render_template('women.html', products=products, filters=get_filters('women'))
+    return render_template('women.html', products=products, filters=get_filters('US Women'))
 
 
 @app.route('/kids')
 def kids():
     print(Filters.filter_sizes)
     products = Product.query.all()
-    return render_template('kids.html', products=products, filters=get_filters('kids'))
+    return render_template('kids.html', products=products, filters=get_filters('US Kids'))
 
 
 @app.route('/<int:pro_id>', methods=["GET"])
