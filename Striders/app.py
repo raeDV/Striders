@@ -1,13 +1,12 @@
 import os
-import sqlite3
 
 import bcrypt
 from flask import Flask, session, redirect, render_template, flash, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-from models import DBUser, Filters, Cart, Product, db
+
 from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm
+from models import DBUser, Filters, Cart, Product, db
 
 app = Flask(__name__)
 app.secret_key = 'striders'
@@ -139,31 +138,55 @@ def getproduct(pro_id):
     return render_template('product.html', item=item, form=form)
 
 
+# @app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
+# def add_to_cart(pro_id):
+#     form = AddToCartForm()
+#     if current_user.is_authenticated:
+#         user_id = current_user.id
+#         cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
+#         if cart_item:
+#             num = form.quantity.data
+#             cart_item.quantity += num
+#             cart_item.save_to_db()
+#         else:
+#             num = form.quantity.data
+#             cart = Cart(pro_id=pro_id, user_id=user_id, quantity=num)
+#             cart.save_to_db()
+#     else:
+#         flash('You need to log in to add items to your cart', category='danger')
+#         return redirect('/login')
+#     return redirect(url_for('cart'))
+#
+#
+# @app.route("/cart")
+# @login_required
+# def cart():
+#     user_id = current_user.id
+#     cart_items = Cart.query.filter_by(user_id=user_id).all()
+#     products = []
+#     final_total = 0
+#     for item in cart_items:
+#         product = Product.query.get(item.pro_id)
+#         product.quantity = item.quantity
+#         final_total += product.pro_price * product.quantity
+#         products.append(product)
+#     return render_template('cart.html', cart=products, final_total=final_total)
+
+# from flask import session
+
 @app.route('/add_to_cart/<int:pro_id>', methods=["POST", "GET"])
 def add_to_cart(pro_id):
     form = AddToCartForm()
     if current_user.is_authenticated:
         user_id = current_user.id
-        cart_items = Cart.query.filter_by(user_id=user_id).all()
-        cart_item = None
-        for item in cart_items:
-            if item.pro_id == pro_id:
-                if item.color == form.color.data and item.size == form.size.data:
-                    cart_item = item
-                    break
-                elif item.color is None and item.size is None:
-                    item.color = form.color.data
-                    item.size = form.size.data
-                    item.save_to_db()
-                    cart_item = item
-                    break
+        cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
         if cart_item:
             num = form.quantity.data
             cart_item.quantity += num
             cart_item.save_to_db()
         else:
             num = form.quantity.data
-            cart = Cart(pro_id=pro_id, user_id=user_id, quantity=num, color=form.color.data, size=form.size.data)
+            cart = Cart(pro_id=pro_id, user_id=user_id, quantity=num)
             cart.save_to_db()
     else:
         flash('You need to log in to add items to your cart', category='danger')
@@ -178,38 +201,51 @@ def add_to_cart(pro_id):
 @app.route("/cart")
 @login_required
 def cart():
+    # Retrieve the form data from Flask's session
+    form_data = session.pop('form', None)
+    form = AddToCartForm(data=form_data)
     user_id = current_user.id
-    products = []
     cart_items = Cart.query.filter_by(user_id=user_id).all()
+    products = []
     final_total = 0
     for item in cart_items:
         product = Product.query.get(item.pro_id)
-        print(item.color)
-        colors_list = product.pro_colors.split(', ')
-        color_index = colors_list.index(item.color)
-        image_url = product.pro_img_url.split(', ')[color_index]
-        print(image_url)
-        new_product = Product(pro_img_url=product.pro_img_url, pro_brand=product.pro_brand,
-                              pro_category=product.pro_category, pro_model=product.pro_model, pro_type=product.pro_type,
-                              pro_size_range=product.pro_size_range, pro_size_type=product.pro_size_type,
-                              pro_colors=product.pro_colors, pro_price=product.pro_price, pro_desc=product.pro_desc)
-        new_product.id = item.id
-        new_product.size = item.size
-        new_product.image_url = image_url
-        new_product.color = item.color
-        new_product.quantity = item.quantity
-        new_product.pro_id = item.pro_id
-        final_total += new_product.pro_price * new_product.quantity
-        products.append(new_product)
-    return render_template('cart.html', cart=products, final_total=final_total)
+        product.pro_size_range = form.size.data
+        product.pro_colors = form.color.data
+        product.quantity = item.quantity
+        final_total += product.pro_price * product.quantity
+        products.append(product)
+
+        session['form'] = form.data
+
+    return render_template('cart.html', cart=products, final_total=final_total, form=form)
 
 
-@app.route('/cart/<int:item_id>/remove', methods=["POST", "GET"])
-def remove_from_cart(item_id):
-    cart_item = Cart.query.get(item_id)
+@app.route('/cart/<int:pro_id>/remove', methods=["POST", "GET"])
+def remove_from_cart(pro_id):
+    user_id = current_user.id
+    cart_item = Cart.query.filter_by(pro_id=pro_id, user_id=user_id).first()
+
     if not cart_item:
         return redirect(url_for('cart'))
-    cart_item.delete_from_db()
+
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save_to_db()
+    else:
+        cart_item.delete_from_db()
+
+    return redirect(url_for('cart'))
+
+
+@app.route('/cart/clear', methods=["POST", "GET"])
+def clear_cart():
+    user_id = current_user.id
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+
+    for cart_item in cart_items:
+        cart_item.delete_from_db()
+
     return redirect(url_for('cart'))
 
 
@@ -242,27 +278,31 @@ def product():
 def add_product():
     form = AddProductForm()
     if form.validate_on_submit():
-        item = Product(
-            pro_img_url=form.img_url.data,
-            pro_brand=form.brand.data,
-            pro_category=form.category.data,
-            pro_size_range=form.size_range.data,
-            pro_size_type=form.size_type.data,
-            pro_colors=form.colors.data,
-            pro_price=form.price.data,
-            pro_desc=form.description.data,
-            pro_model=form.model.data,
-            pro_type=form.type.data
+        if form.pro_img_url.data:
+            filename = secure_filename(form.pro_img_url.data.filename)
+            form.pro_img_url.data.save(os.path.join(app.root_path, 'static/img', filename))
+            img_url = filename
+        else:
+            img_url = None
+        new_product = Product(
+            pro_img_url=img_url,
+            pro_brand=form.pro_brand.data,
+            pro_category=form.pro_category.data,
+            pro_size_range=form.pro_size_range.data,
+            pro_size_type=form.pro_size_type.data,
+            pro_colors=form.pro_colors.data,
+            pro_price=form.pro_price.data,
+            pro_desc=form.pro_desc.data,
+            pro_model=form.pro_model.data,
+            pro_type=form.pro_type.data
         )
 
         # add the new product to the database
-        db.session.add(item)
+        db.session.add(new_product)
         db.session.commit()
 
         flash('Product added successfully.')
         return redirect('/add-product')
-    else:
-        flash('Failed to Add Product.')
 
     return render_template('add_product.html', form=form)
 
