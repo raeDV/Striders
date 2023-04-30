@@ -5,8 +5,8 @@ from flask import Flask, session, redirect, render_template, flash, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 
+from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm, FilterForm
 from models import DBUser, Filters, Cart, Product, db
-from forms import LoginForm, RegisterForm, AddProductForm, AddToCartForm
 
 app = Flask(__name__)
 app.secret_key = 'striders'
@@ -53,7 +53,7 @@ def get_filters(gender):
         cat = cat.title()
         if cat not in filters.filter_categories:
             filters.filter_categories.append(cat)
-    filters.sorters = ['Best Sellers', 'Newest', 'Price High to Low', 'Price Low to High', 'Brand A-Z']
+    filters.sorters = ['Best Sellers', 'Price High to Low', 'Price Low to High', 'Brand A-Z']
     return filters
 
 
@@ -141,22 +141,78 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/men')
+@app.route('/men', methods=['GET', 'POST'])
 def men():
-    products = Product.query.all()
+    form = FilterForm()
+    match form.sort.data:
+        # case 'Best Sellers':
+        # products =
+        case 'Price High to Low':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_price.desc()).all()
+        case 'Price Low to High':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_price.asc()).all()
+        case 'Brand A-Z':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_brand.asc()).all()
+        case _:
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).all()
     return render_template('men.html', products=products, filters=get_filters('US Men'))
 
 
-@app.route('/women')
+@app.route('/women', methods=['GET', 'POST'])
 def women():
-    products = Product.query.all()
+    form = FilterForm()
+    match form.sort.data:
+        # case 'Best Sellers':
+        # products =
+        case 'Price High to Low':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_price.desc()).all()
+        case 'Price Low to High':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_price.asc()).all()
+        case 'Brand A-Z':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_brand.asc()).all()
+        case _:
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).all()
     return render_template('women.html', products=products, filters=get_filters('US Women'))
 
 
-@app.route('/kids')
+@app.route('/kids', methods=['GET', 'POST'])
 def kids():
-    print(Filters.filter_sizes)
-    products = Product.query.all()
+    form = FilterForm()
+    match form.sort.data:
+        # case 'Best Sellers':
+        # products =
+        case 'Price High to Low':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_price.desc()).all()
+        case 'Price Low to High':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_price.asc()).all()
+        case 'Brand A-Z':
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).order_by(Product.pro_brand.asc()).all()
+        case _:
+            products = Product.query.where(Product.pro_colors.like('%' + form.color.data + '%')).where(
+                Product.pro_brand.like('%' + form.brand.data + '%')).where(
+                Product.pro_category.like('%' + form.category.data + '%')).all()
     return render_template('kids.html', products=products, filters=get_filters('US Kids'))
 
 
@@ -168,8 +224,8 @@ def getproduct(pro_id):
     sizes = []
     sizes_range[0] = float(sizes_range[0])
     sizes_range[1] = float(sizes_range[1])
-    for s in range(int(sizes_range[0]*2), int(sizes_range[1]*2)+1):
-        sizes.append(s/2)
+    for s in range(int(sizes_range[0] * 2), int(sizes_range[1] * 2) + 1):
+        sizes.append(s / 2)
     return render_template('product.html', item=item, form=form, sizes=sizes)
 
 

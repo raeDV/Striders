@@ -59,3 +59,10 @@ class AddToCartForm(FlaskForm):
     color = SelectField('Select Color', validators=[DataRequired()], default=0)
     quantity = IntegerField('Enter Quantity', validators=[DataRequired(), NumberRange(min=1)], default=1)
     submit = SubmitField('Add to Cart')
+
+
+class FilterForm(FlaskForm):
+    brand = SelectField('Select Brand', validators=[DataRequired()], default='')
+    color = SelectField('Select Color', validators=[DataRequired()], default='')
+    category = SelectField('Select Category', validators=[DataRequired()], default='')
+    sort = SelectField('Sort By', validators=[DataRequired()], default='Best Sellers')
