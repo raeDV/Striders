@@ -2,16 +2,16 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Striders</title>
+    <title>{% block title %}Striders{% endblock %}</title>
     <style>
         @font-face {
             font-family: ParaStencil;
-            src: url("static/res/ParalucentStencil-Medium.ttf");
+            src: url("/static/res/ParalucentStencil-Medium.ttf");
         }
 
         @font-face {
             font-family: ParaExtraLight;
-            src: url("static/res/Paralucent-ExtraLight.ttf");
+            src: url("/static/res/Paralucent-ExtraLight.ttf");
         }
 
         .formcenter table {
@@ -45,7 +45,7 @@
             background-color: #FFF;
             background-attachment: fixed;
             min-height: 100px;
-            background-image: url("static/img/TileTex.png");
+            background-image: url("/static/img/TileTex.png");
             color: #650011;
             text-align: center;
             width: 100%
